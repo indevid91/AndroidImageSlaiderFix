@@ -1,12 +1,14 @@
 package com.daimajia.slider.library.SliderTypes;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.daimajia.slider.library.R;
 import com.squareup.picasso.Callback;
+import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 
@@ -48,6 +50,7 @@ public abstract class BaseSliderView {
     private String mDescription;
 
     private Picasso mPicasso;
+    private ImageView targetImageView;
 
     /**
      * Scale type of the image.
@@ -175,9 +178,14 @@ public abstract class BaseSliderView {
 
     /**
      * set a slider image click listener
-     * @param l
+     * @param
      * @return
      */
+
+    public ImageView getBitmap(){
+        return targetImageView;
+    }
+
     public BaseSliderView setOnSliderClickListener(OnSliderClickListener l){
         mOnSliderClickListener = l;
         return this;
@@ -190,7 +198,7 @@ public abstract class BaseSliderView {
      */
     protected void bindEventAndShow(final View v, ImageView targetImageView){
         final BaseSliderView me = this;
-
+        this.targetImageView = targetImageView;
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -200,7 +208,7 @@ public abstract class BaseSliderView {
             }
         });
 
-        if (targetImageView == null)
+        if (this.targetImageView == null)
             return;
 
         if (mLoadListener != null) {
@@ -210,11 +218,11 @@ public abstract class BaseSliderView {
         Picasso p = (mPicasso != null) ? mPicasso : Picasso.with(mContext);
         RequestCreator rq = null;
         if(mUrl!=null){
-            rq = p.load(mUrl);
+            rq = p.load(mUrl).memoryPolicy(MemoryPolicy.NO_CACHE);
         }else if(mFile != null){
-            rq = p.load(mFile);
+            rq = p.load(mFile).memoryPolicy(MemoryPolicy.NO_CACHE);
         }else if(mRes != 0){
-            rq = p.load(mRes);
+            rq = p.load(mRes).memoryPolicy(MemoryPolicy.NO_CACHE);
         }else{
             return;
         }
@@ -243,7 +251,9 @@ public abstract class BaseSliderView {
                 break;
         }
 
-        rq.into(targetImageView,new Callback() {
+
+
+        rq.into(this.targetImageView,new Callback() {
             @Override
             public void onSuccess() {
                 if(v.findViewById(R.id.loading_bar) != null){

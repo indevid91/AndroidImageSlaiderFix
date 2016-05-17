@@ -56,7 +56,14 @@ public class SliderAdapter extends PagerAdapter implements BaseSliderView.ImageL
     }
 
     public void removeAllSliders(){
+        for (int i = 0; i < mImageContents.size(); i++){
+            if(mImageContents.get(i).getBitmap() != null){
+                mImageContents.get(i).getBitmap().invalidate();
+                mImageContents.get(i).getBitmap().setImageBitmap(null);
+            }
+        }
         mImageContents.clear();
+
         notifyDataSetChanged();
     }
 
